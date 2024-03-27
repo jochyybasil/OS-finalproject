@@ -1,5 +1,4 @@
-#ifndef PROCESS_H
-#define PROCESS_H
+#pragma once
 
 #include <pthread.h>
 
@@ -17,18 +16,16 @@
 #define EXECUTION_COPY 9
 #define ABS_DEADLINE 10
 
-struct processes{
+typedef struct processes
+{
     int process_id;
     int process_size;
     int process_state;
     pthread_t thread;
     int thread_id;
-    int T[7],instance;
-};
+    int P[7], instance;
+} processes;
 
-
-void* process_function(void* arg);
-void* thread_function(void* arg);
+void *process_function(void *arg);
+void *thread_function(void *arg);
 void process_management();
-
-#endif
