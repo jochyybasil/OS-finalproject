@@ -23,8 +23,36 @@ void get_processes(processes *p1, int n)
         p1->process_state = 0;
         p1++;
         i++;
+        p1[i].process_id = i + 1;
     }
 }
+
+
+
+void rms_get_processes(processes p1[], int n) {
+    int i = 0;
+    while (i < n) {
+        printf("Enter process %d parameters\n", i + 1);
+        printf("Arrival time: ");
+        scanf("%d", &p1[i].P[ARRIVAL]);
+        printf("Execution time: ");
+        scanf("%d", &p1[i].P[EXECUTION]);
+        printf("Deadline time: ");
+        scanf("%d", &p1[i].P[DEADLINE]);
+        printf("Period: ");
+        scanf("%d", &p1[i].P[PERIOD]);
+        p1[i].P[ABS_ARRIVAL] = 0;
+        p1[i].P[EXECUTION_COPY] = 0;
+        p1[i].P[ABS_DEADLINE] = 0;
+        p1[i].instance = 0;
+        p1[i].process_state = 0;
+        p1[i].process_id = i + 1;
+        i++;
+    }
+}
+
+
+
 
 int hyperperiod_calc(processes *p1, int n)
 {
@@ -37,6 +65,7 @@ int hyperperiod_calc(processes *p1, int n)
         i++;
     }
     ht = lcm(a, n);
+    printf(ht);
 
     return ht;
 }
@@ -49,15 +78,28 @@ int gcd(int a, int b)
         return gcd(b, a % b);
 }
 
+
+
 int lcm(int *a, int n)
 {
     int res = 1, i;
     for (i = 0; i < n; i++)
+    
     {
+        if (a[i] == 0) {
+            // Skip zero values
+            continue;
+        }
         res = res * a[i] / gcd(res, a[i]);
     }
     return res;
 }
+
+
+
+
+
+
 
 int sp_interrupt(processes *p1, int tmr, int n)
 {
@@ -179,3 +221,56 @@ float cpu_util(processes *p1, int n)
     }
     return cu;
 }
+
+
+
+int compare_periods(const void *a, const void *b) {
+    const processes *p1 = (const processes *)a;
+    const processes *p2 = (const processes *)b;
+    return p1->P[PERIOD] - p2->P[PERIOD];
+}
+
+
+
+void rms_scheduler(processes pro[], int num_processes, int hyper_period) {
+    int timer = 0;
+    int i, j;
+
+    printf("i am here in the algorithm\n");
+
+    // Sort tasks based on periods
+    qsort(pro, num_processes, sizeof(processes), compare_periods);
+    printf("I have sorted\n");
+
+    printf("I am not entering the while loop\n");
+
+    while (timer < hyper_period) {
+        printf("Time: %d\n", timer);
+
+        // Check for task arrivals and deadlines
+        for (i = 0; i < num_processes; i++) {
+            if (timer % pro[i].P[PERIOD] == 0) {
+                printf("Task %d arrived\n", pro[i].process_id);
+            }
+
+            if (timer % pro[i].P[DEADLINE] == 0) {
+                printf("Task %d missed deadline\n", pro[i].process_id);
+            }
+        }
+
+        // Execute tasks based on priorities (shorter period -> higher priority)
+        for (i = 0; i < num_processes; i++) {
+            if (timer % pro[i].P[PERIOD] == 0) {
+                printf("Executing Task %d\n", pro[i].process_id);
+                // Simulate task execution
+                for (j = 0; j < pro[i].P[EXECUTION]; j++) {
+                    // Task execution
+                    timer++;
+                }
+            }
+        }
+
+        timer++;
+    }
+}
+

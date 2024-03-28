@@ -15,7 +15,8 @@
 #define ALL 1
 #define CURRENT 0
 
-void get_processes(processes *p1,int n);				
+void get_processes(processes *p1,int n);
+void rms_get_processes(processes p1[], int n);				
 int hyperperiod_calc(processes *p1,int n);			
 float cpu_util(processes *p1,int n);				
 int gcd(int a, int b);					
@@ -25,3 +26,4 @@ int min(processes *p1,int n,int p);
 void update_abs_arrival(processes *p1,int n,int k,int all);	
 void update_abs_deadline(processes *p1,int n,int all);	
 void copy_execution_time(processes *p1,int n,int all);	
+void rms_scheduler(processes pro[], int num_processes, int hyper_period);
