@@ -16,16 +16,25 @@
 #define EXECUTION_COPY 9
 #define ABS_DEADLINE 10
 
-typedef struct processes
+
+struct Process
 {
     int process_id;
     int process_size;
     int process_state;
     pthread_t thread;
     int thread_id;
-    int P[7], instance;
-} processes;
 
-void *process_function(void *arg);
-void *thread_function(void *arg);
-void process_management();
+    int process_request_limit;          /**< The request limit of the process. */
+    int requested_memory_size; 
+
+    int P[7], instance;
+};
+
+struct Process* create_processes();
+void start_process(struct Process *process);
+void* temperature_measurement(void* arg);
+void* user_interface(void* arg);
+void* data_logging(void* arg);
+void* alarm_handling(void* arg);
+void terminate_process(struct Process *process);

@@ -15,15 +15,15 @@
 #define ALL 1
 #define CURRENT 0
 
-void get_processes(processes *p1,int n);
-void rms_get_processes(processes p1[], int n);				
-int hyperperiod_calc(processes *p1,int n);			
-float cpu_util(processes *p1,int n);				
+void get_processes(struct Process *process,int n);
+void rms_get_processes(struct Process p1[], int n);				
+int hyperperiod_calc(struct Process *process,int n);			
+float cpu_util(struct Process *process,int n);				
 int gcd(int a, int b);					
 int lcm(int *a, int n);					
-int sp_interrupt(processes *p1,int tmr,int n);		
-int min(processes *p1,int n,int p);				
-void update_abs_arrival(processes *p1,int n,int k,int all);	
-void update_abs_deadline(processes *p1,int n,int all);	
-void copy_execution_time(processes *p1,int n,int all);	
-void rms_scheduler(processes pro[], int num_processes, int hyper_period);
+int sp_interrupt(struct Process *process,int tmr,int n);		
+int min(struct Process *process,int n,int p);				
+void update_abs_arrival(struct Process *process,int n,int k,int all);	
+void update_abs_deadline(struct Process *process,int n,int all);	
+void copy_execution_time(struct Process *process,int n,int all);
+void rms_scheduler(const struct Process pro[], int num_processes, int hyper_period);

@@ -2,51 +2,51 @@
 #include "processes.h"
 #include "edf.h"
 
-void get_processes(processes *p1, int n)
+void get_processes(struct Process *process, int n)
 {
     int i = 0;
     while (i < n)
     {
         printf("Enter process %d parameters\n", i + 1);
         printf("Arrival time: ");
-        scanf("%d", &p1->P[ARRIVAL]);
+        scanf("%d", &process->P[ARRIVAL]);
         printf("Execution time: ");
-        scanf("%d", &p1->P[EXECUTION]);
+        scanf("%d", &process->P[EXECUTION]);
         printf("Deadline time: ");
-        scanf("%d", &p1->P[DEADLINE]);
+        scanf("%d", &process->P[DEADLINE]);
         printf("Period: ");
-        scanf("%d", &p1->P[PERIOD]);
-        p1->P[ABS_ARRIVAL] = 0;
-        p1->P[EXECUTION_COPY] = 0;
-        p1->P[ABS_DEADLINE] = 0;
-        p1->instance = 0;
-        p1->process_state = 0;
-        p1++;
+        scanf("%d", &process->P[PERIOD]);
+        process->P[ABS_ARRIVAL] = 0;
+        process->P[EXECUTION_COPY] = 0;
+        process->P[ABS_DEADLINE] = 0;
+        process->instance = 0;
+        process->process_state = 0;
+        process++;
         i++;
-        p1[i].process_id = i + 1;
+        process[i].process_id = i + 1;
     }
 }
 
 
 
-void rms_get_processes(processes p1[], int n) {
+void rms_get_processes(struct Process process[], int n) {
     int i = 0;
     while (i < n) {
         printf("Enter process %d parameters\n", i + 1);
         printf("Arrival time: ");
-        scanf("%d", &p1[i].P[ARRIVAL]);
+        scanf("%d", &process[i].P[ARRIVAL]);
         printf("Execution time: ");
-        scanf("%d", &p1[i].P[EXECUTION]);
+        scanf("%d", &process[i].P[EXECUTION]);
         printf("Deadline time: ");
-        scanf("%d", &p1[i].P[DEADLINE]);
+        scanf("%d", &process[i].P[DEADLINE]);
         printf("Period: ");
-        scanf("%d", &p1[i].P[PERIOD]);
-        p1[i].P[ABS_ARRIVAL] = 0;
-        p1[i].P[EXECUTION_COPY] = 0;
-        p1[i].P[ABS_DEADLINE] = 0;
-        p1[i].instance = 0;
-        p1[i].process_state = 0;
-        p1[i].process_id = i + 1;
+        scanf("%d", &process[i].P[PERIOD]);
+        process[i].P[ABS_ARRIVAL] = 0;
+        process[i].P[EXECUTION_COPY] = 0;
+        process[i].P[ABS_DEADLINE] = 0;
+        process[i].instance = 0;
+        process[i].process_state = 0;
+        process[i].process_id = i + 1;
         i++;
     }
 }
@@ -54,14 +54,14 @@ void rms_get_processes(processes p1[], int n) {
 
 
 
-int hyperperiod_calc(processes *p1, int n)
+int hyperperiod_calc(struct Process *process, int n)
 {
     int i = 0, ht, a[10];
     while (i < n)
 
     {
-        a[i] = p1->P[PERIOD];
-        p1++;
+        a[i] = process->P[PERIOD];
+        process++;
         i++;
     }
     ht = lcm(a, n);
@@ -101,30 +101,30 @@ int lcm(int *a, int n)
 
 
 
-int sp_interrupt(processes *p1, int tmr, int n)
+int sp_interrupt(struct Process *process, int tmr, int n)
 {
     int i = 0, n1 = 0, a = 0;
-    processes *p1_copy;
-    p1_copy = p1;
+    struct Process *process_copy;
+    process_copy = process;
     while (i < n)
     {
-        if (tmr == p1->P[ABS_ARRIVAL])
+        if (tmr == process->P[ABS_ARRIVAL])
         {
-            p1->process_state = 1;
+            process->process_state = 1;
             a++;
         }
-        p1++;
+        process++;
         i++;
     }
 
-    p1 = p1_copy;
+    process = process_copy;
     i = 0;
 
     while (i < n)
     {
-        if (p1->process_state == 0)
+        if (process->process_state == 0)
             n1++;
-        p1++;
+        process++;
         i++;
     }
 
@@ -136,87 +136,87 @@ int sp_interrupt(processes *p1, int tmr, int n)
     return 0;
 }
 
-void update_abs_deadline(processes *p1, int n, int all)
+void update_abs_deadline(struct Process *process, int n, int all)
 {
     int i = 0;
     if (all)
     {
         while (i < n)
         {
-            p1->P[ABS_DEADLINE] = p1->P[DEADLINE] + p1->P[ABS_ARRIVAL];
-            p1++;
+            process->P[ABS_DEADLINE] = process->P[DEADLINE] + process->P[ABS_ARRIVAL];
+            process++;
             i++;
         }
     }
     else
     {
-        p1 += n;
-        p1->P[ABS_DEADLINE] = p1->P[DEADLINE] + p1->P[ABS_ARRIVAL];
+        process += n;
+        process->P[ABS_DEADLINE] = process->P[DEADLINE] + process->P[ABS_ARRIVAL];
     }
 }
 
-void update_abs_arrival(processes *p1, int n, int k, int all)
+void update_abs_arrival(struct Process *process, int n, int k, int all)
 {
     int i = 0;
     if (all)
     {
         while (i < n)
         {
-            p1->P[ABS_ARRIVAL] = p1->P[ARRIVAL] + k * (p1->P[PERIOD]);
-            p1++;
+            process->P[ABS_ARRIVAL] = process->P[ARRIVAL] + k * (process->P[PERIOD]);
+            process++;
             i++;
         }
     }
     else
     {
-        p1 += n;
-        p1->P[ABS_ARRIVAL] = p1->P[ARRIVAL] + k * (p1->P[PERIOD]);
+        process += n;
+        process->P[ABS_ARRIVAL] = process->P[ARRIVAL] + k * (process->P[PERIOD]);
     }
 }
 
-void copy_execution_time(processes *p1, int n, int all)
+void copy_execution_time(struct Process *process, int n, int all)
 {
     int i = 0;
     if (all)
     {
         while (i < n)
         {
-            p1->P[EXECUTION_COPY] = p1->P[EXECUTION];
-            p1++;
+            process->P[EXECUTION_COPY] = process->P[EXECUTION];
+            process++;
             i++;
         }
     }
     else
     {
-        p1 += n;
-        p1->P[EXECUTION_COPY] = p1->P[EXECUTION];
+        process += n;
+        process->P[EXECUTION_COPY] = process->P[EXECUTION];
     }
 }
 
-int min(processes *p1, int n, int p)
+int min(struct Process *process, int n, int p)
 {
     int i = 0, min = 0x7FFF, process_id = IDLE_PROCESS_ID;
     while (i < n)
     {
-        if (min > p1->P[p] && p1->process_state == 1)
+        if (min > process->P[p] && process->process_state == 1)
         {
-            min = p1->P[p];
+            min = process->P[p];
             process_id = i;
         }
-        p1++;
+        process++;
         i++;
     }
     return process_id;
 }
 
-float cpu_util(processes *p1, int n)
+float cpu_util(struct Process *process, int n)
 {
     int i = 0;
     float cu = 0;
     while (i < n)
     {
-        cu = cu + (float)p1->P[EXECUTION] / (float)p1->P[DEADLINE];
-        p1++;
+        cu = cu + (float)process->P[EXECUTION] / (float)process->P[DEADLINE];
+        process++;
         i++;
     }
     return cu;
@@ -225,21 +225,21 @@ float cpu_util(processes *p1, int n)
 
 
 int compare_periods(const void *a, const void *b) {
-    const processes *p1 = (const processes *)a;
-    const processes *p2 = (const processes *)b;
-    return p1->P[PERIOD] - p2->P[PERIOD];
+    const struct Process *process = (const struct Process *)a;
+    const struct Process *p2 = (const struct Process *)b;
+    return process->P[PERIOD] - p2->P[PERIOD];
 }
 
 
 
-void rms_scheduler(processes pro[], int num_processes, int hyper_period) {
+void rms_scheduler(const struct Process pro[], int num_processes, int hyper_period) {
     int timer = 0;
     int i, j;
 
     printf("i am here in the algorithm\n");
 
     // Sort tasks based on periods
-    qsort(pro, num_processes, sizeof(processes), compare_periods);
+    qsort(pro, num_processes, sizeof(const struct Process ), compare_periods);
     printf("I have sorted\n");
 
     printf("I am not entering the while loop\n");
