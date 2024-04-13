@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <pthread.h>
@@ -16,7 +17,7 @@
 #define EXECUTION_COPY 9
 #define ABS_DEADLINE 10
 
-
+// process control block - PCB
 struct Process
 {
     int process_id;
@@ -37,4 +38,6 @@ void* temperature_measurement(void* arg);
 void* user_interface(void* arg);
 void* data_logging(void* arg);
 void* alarm_handling(void* arg);
+void suspend_process(struct Process *process);
+void resume_suspended(struct Process *process);
 void terminate_process(struct Process *process);

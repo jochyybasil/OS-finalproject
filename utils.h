@@ -1,5 +1,5 @@
 #include <pthread.h>
-#include "processes.h"
+#include "process_management.h"
 
 #define ARRIVAL 4
 #define EXECUTION 5

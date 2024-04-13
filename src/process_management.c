@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "processes.h"
+#include "process_management.h"
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -69,10 +69,24 @@ void* alarm_handling(void* arg) {
     return NULL;
 }
 
+void suspend_process(struct Process *process){
+    process->process_state = BLOCKED;
+    printf("Suspending process %d.\n", process->process_id);
+    // Save execution context and perform other suspension tasks
+}
+
+
+void resume_suspended(struct Process *process){
+    process->process_state = READY;
+    printf("Resuming process %d.\n", process->process_id);
+    // Restore execution context and resume execution
+
+}
+
 void terminate_process(struct Process *process){
     process->process_state = TERMINATED;
     printf("Terminating process %d\n", process->process_id);
-    //free(process->memory);
+    free(process);
 }
 
 
