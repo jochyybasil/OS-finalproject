@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "process_management.h"
-#include "utils.h"
+#include "../process_management.h"
+#include "../utils.h"
 #include <semaphore.h>
 
 #define MAX_PROCESS 10

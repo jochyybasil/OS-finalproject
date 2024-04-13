@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "process_management.h"
-#include "utils.h"
+#include "../process_management.h"
+#include "../utils.h"
 
 void get_processes(struct Process *process, int n)
 {
