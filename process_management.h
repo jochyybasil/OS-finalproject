@@ -17,6 +17,8 @@
 #define EXECUTION_COPY 9
 #define ABS_DEADLINE 10
 
+#define MAX_STACK_SIZE 0
+
 // process control block - PCB
 struct Process
 {
@@ -26,8 +28,9 @@ struct Process
     pthread_t thread;
     int thread_id;
 
-    int process_request_limit;          /**< The request limit of the process. */
-    int requested_memory_size; 
+    char process_name[20];
+    unsigned int stack[MAX_STACK_SIZE];
+    pthread_t context;
 
     int P[7], instance;
 };
