@@ -1,7 +1,7 @@
 #pragma once
 
 #define MAX_MESSAGES 10
-#define MESSAGE_SIZE 5
+#define MESSAGE_SIZE 50
 
 #define MAX_MESSAGE_QUEUE_SIZE 10
 #define MAX_MESSAGE_SIZE 5
@@ -13,12 +13,13 @@ struct Message{
     char content[MAX_MESSAGE_SIZE];
 };
 
-struct MessageQueue {
+struct __attribute__((__packed__)) MessageQueue {
     struct Message messages[MAX_MESSAGE_QUEUE_SIZE];
     int front;
     int rear;
     int count;
 };
+
 
 void init_ipc();
 void send_message(int sender_id, const char* content);

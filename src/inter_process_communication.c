@@ -7,8 +7,10 @@
 #include <sys/mman.h>
 #include <signal.h>
 #include "../inter_process_communication.h"
+#include <errno.h> 
 
 // Constants
+
 #define SHARED_MEMORY_SIZE 1024
 #define SEMAPHORE_NAME "/message_semaphore"
 
@@ -35,8 +37,10 @@ void init_ipc() {
     }
 
     // Resize shared memory to fit MessageQueue struct
-    if (ftruncate(shm_fd, sizeof(struct MessageQueue)) == -1) {
+    //printf("Size of MessageQueue struct: %zu\n", sizeof(struct MessageQueue));
+    if (ftruncate(shm_fd, sizeof(*message_queue)) == -1) {
         perror("ftruncate");
+    
         exit(EXIT_FAILURE);
     }
 

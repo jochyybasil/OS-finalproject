@@ -1,20 +1,24 @@
 #include <stdio.h>
 #include "../memory_management.h"
+#include "../process_management.h"
 #include <unistd.h>
 #include <stdlib.h>
 
 // Define memory allocation status
+#define NUM_PROCESSES 4
+
 #define ALLOCATED 1
 #define FREE 0
 
 #define MIN_BLOCK_SIZE 16
-
 #define MAX_BLOCKS 100
 
 // Global variables
 static struct MemoryBlock memory_blocks[MAX_BLOCKS];
 static size_t total_memory;
 static size_t used_memory;
+
+
 
 // Initialize memory management module
 void init_memory_manager(size_t total_mem) {
@@ -28,33 +32,39 @@ void init_memory_manager(size_t total_mem) {
     }
 }
 
-// Allocate memory block
 void* allocate_memory(size_t size) {
     // Check if memory allocation will exceed total memory
-    if (used_memory + size > total_memory) {
+    if (used_memory + (size * NUM_PROCESSES) > total_memory) {
         printf("Error: Insufficient memory\n");
         return NULL;
     }
 
-    // Find a free memory block
-    for (int i = 0; i < MAX_BLOCKS; i++) {
-        if (memory_blocks[i].status == FREE && memory_blocks[i].size >= size && (memory_blocks[i].size - size) >= MIN_BLOCK_SIZE) {
+    // Allocate memory for NUM_PROCESSES processes
+    void* address = malloc(size * NUM_PROCESSES);
+    if (address == NULL) {
+        printf("Error: Memory allocation failed\n");
+        return NULL;
+    }
 
-            // Allocate memory
-            memory_blocks[i].address = malloc(size);
-            if (memory_blocks[i].address == NULL) {
-                printf("Error: Memory allocation failed\n");
-                return NULL;
+    // Update memory blocks for each process
+    for (int i = 0; i < NUM_PROCESSES; i++) {
+        // Find a free memory block
+        for (int j = 0; j < MAX_BLOCKS; j++) {
+            if (memory_blocks[j].status == FREE) {
+                // Allocate memory block for the process
+                memory_blocks[j].address = address + (i * size);
+                memory_blocks[j].size = size;
+                memory_blocks[j].status = ALLOCATED;
+                used_memory += size;
+                break;
             }
-            memory_blocks[i].size = size;
-            memory_blocks[i].status = ALLOCATED;
-            used_memory += size;
-            return memory_blocks[i].address;
         }
     }
-    printf("Error: Insufficient memory\n");
-    return NULL;
+
+    return address;
 }
+
+
 
 // Free memory block
 void free_memory(void* ptr) {

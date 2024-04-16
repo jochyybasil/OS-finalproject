@@ -8,6 +8,20 @@
 
 #define NUM_PROCESSES 4
 
+// Define process states
+#define READY 0
+#define RUNNING 1
+#define BLOCKED 2
+#define TERMINATED 3
+
+#define ARRIVAL 4
+#define EXECUTION 5
+#define DEADLINE 6
+#define PERIOD 7
+#define ABS_ARRIVAL 8
+#define EXECUTION_COPY 9
+#define ABS_DEADLINE 10
+
 // Process IDs
 #define TEMPERATURE_MEASUREMENT_ID 0
 #define DATA_LOGGING_ID 1
@@ -24,7 +38,7 @@ static int temperature_data_received = 0;
 // Function to initialize a task's context
 void initialize_process_context(struct Process *process, void *(*task_function)(void*), void *arg) {    
     // Initialize the task's context
-    initialize_context(&(process->context), task_function, arg);
+    initialize_context((struct TaskContext *)&(process->context), task_function, arg);
 }
 
 // Create and manage processes
@@ -68,7 +82,7 @@ void start_process(struct Process *process) {
     process->process_state = RUNNING;
     printf("Starting process %d\n", process->process_id);
     // Start the task by switching to its context
-    context_switch(NULL, &(process->context));
+    context_switch(NULL, (struct TaskContext *)&(process->context));
 }
 
 // Temperature measurement task

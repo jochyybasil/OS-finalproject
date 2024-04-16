@@ -1,21 +1,6 @@
-
 #pragma once
 
 #include <pthread.h>
-
-// Define process states
-#define READY 0
-#define RUNNING 1
-#define BLOCKED 2
-#define TERMINATED 3
-
-#define ARRIVAL 4
-#define EXECUTION 5
-#define DEADLINE 6
-#define PERIOD 7
-#define ABS_ARRIVAL 8
-#define EXECUTION_COPY 9
-#define ABS_DEADLINE 10
 
 #define MAX_STACK_SIZE 0
 
@@ -23,7 +8,7 @@
 struct Process
 {
     int process_id;
-    int process_size;
+    size_t process_size;
     int process_state;
     pthread_t thread;
     int thread_id;
