@@ -20,7 +20,7 @@ static struct MessageQueue *message_queue;
 static sem_t *message_semaphore;
 static char *shared_memory;
 
-// Function to initialize the IPC module
+// Function to initialize interprocess communication
 void init_ipc() {
     // Create or open the semaphore
     message_semaphore = sem_open(SEMAPHORE_NAME, O_CREAT, 0644, 1);
@@ -36,18 +36,17 @@ void init_ipc() {
         exit(EXIT_FAILURE);
     }
 
-    // Resize shared memory to fit MessageQueue struct
-    //printf("Size of MessageQueue struct: %zu\n", sizeof(struct MessageQueue));
-    if (ftruncate(shm_fd, sizeof(*message_queue)) == -1) {
-        perror("ftruncate");
-    
-        exit(EXIT_FAILURE);
-    }
+    // // Resize shared memory to fit MessageQueue struct
+    // if (ftruncate(shm_fd, sizeof(struct MessageQueue)) == -1) {
+    //     printf("my fault");
+    //     perror("ftruncate");
+    //     exit(EXIT_FAILURE);
+    // }
 
     // Map the shared memory object into the current address space
     message_queue = mmap(NULL, sizeof(struct MessageQueue), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if (message_queue == MAP_FAILED) {
-        perror("mmap");
+        perror("mmap for message_queue");
         exit(EXIT_FAILURE);
     }
 
@@ -59,13 +58,14 @@ void init_ipc() {
     // Map the shared memory for shared content
     shared_memory = mmap(NULL, SHARED_MEMORY_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
     if (shared_memory == MAP_FAILED) {
-        perror("mmap");
+        perror("mmap for shared_memory");
         exit(EXIT_FAILURE);
     }
 
     // Close shared memory file descriptor
     close(shm_fd);
 }
+
 
 // Function to send a message
 void send_message(int sender_id, const char* content) {

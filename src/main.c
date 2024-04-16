@@ -25,7 +25,7 @@ int main() {
         printf("Error creating processes. Exiting.\n");
         return 1;
     }
-    
+
     // Initialize inter-process communication
     init_ipc();
 
@@ -33,6 +33,9 @@ int main() {
     for (int i = 0; i < NUM_PROCESSES; i++) {
         start_process(&processes[i]);
     }
+
+  
+
 
     // Simulate real-time scheduling
     int timer = 0;
