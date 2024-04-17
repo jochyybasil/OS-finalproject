@@ -14,7 +14,7 @@ int main() {
     init_memory_manager(total_mem);
 
     // Initialize inter-process communication
-    //init_ipc();
+    init_ipc();
 
     // Create processes
     struct Process* processes = create_processes();
