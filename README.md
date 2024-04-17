@@ -1,7 +1,7 @@
 # OS-finalproject: Project Readme
 
 ## Overview
-This project simulates simple concepts for a real-time operating system focusing on real-time scheduling, inter-process communication, and memory management for tasks in a temperature monitoring device. It consists of several modules including process management, inter-process communication, memory management, and context switching.
+This project simulates simple concepts for a real-time operating system focusing on real-time scheduling, inter-process communication, and memory management for tasks in a temperature monitoring device. The 4 taks of the system are temperature measurement, data logging, user interface, and alarm handling. It consists of several modules including process management, inter-process communication, memory management, and context switching to simulate the microkernel of the rtos.
 
 ## Design: Modules
 

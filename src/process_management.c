@@ -77,6 +77,7 @@ struct Process* create_processes() {
     return processes;
 }
 
+
 // Start a process
 void start_process(struct Process *process) {
     process->process_state = RUNNING;

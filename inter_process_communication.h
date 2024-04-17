@@ -13,7 +13,7 @@ struct Message{
     char content[MAX_MESSAGE_SIZE];
 };
 
-struct __attribute__((__packed__)) MessageQueue {
+struct MessageQueue {
     struct Message messages[MAX_MESSAGE_QUEUE_SIZE];
     int front;
     int rear;
