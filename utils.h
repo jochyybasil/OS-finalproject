@@ -27,21 +27,3 @@ void update_abs_deadline(struct Process *process,int n,int all);
 void copy_execution_time(struct Process *process,int n,int all);
 void rms_scheduler(const struct Process pro[], int num_processes, int hyper_period);
 
-
-// #include <pthread.h>
-
-
-// #define ARRIVAL 4
-// #define EXECUTION 5
-// #define DEADLINE 6
-// #define PERIOD 7
-// #define ABS_ARRIVAL 8
-// #define EXECUTION_COPY 9
-// #define ABS_DEADLINE 10
-
-
-
-// #define IDLE_PROCESS_ID 1023  
-// #define ALL 1
-// #define CURRENT 0
-

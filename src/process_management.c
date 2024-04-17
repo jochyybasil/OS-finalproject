@@ -13,16 +13,7 @@
 // Define process states
 #define READY 0
 #define RUNNING 1
-#define BLOCKED 2
 #define TERMINATED 3
-
-#define ARRIVAL 4
-#define EXECUTION 5
-#define DEADLINE 6
-#define PERIOD 7
-#define ABS_ARRIVAL 8
-#define EXECUTION_COPY 9
-#define ABS_DEADLINE 10
 
 // Process IDs
 #define TEMPERATURE_MEASUREMENT_ID 0
@@ -89,7 +80,7 @@ void start_process(struct Process *process) {
 void terminate_process(struct Process *process) {
     process->process_state = TERMINATED;
     printf("Terminating process %d\n", process->process_id);
-    // Send termination signal or perform cleanup if necessary
+    // Send termination signal or perform cleanup
 }
 
 
@@ -137,6 +128,7 @@ void* data_logging(void* arg) {
 
         // Send the temperature data to the user interface task
         send_message(USER_INTERFACE_ID, temp_message.content);
+        
     }
 
     sleep(1); // Simulate data logging task
@@ -197,73 +189,3 @@ void* alarm_handling(void* arg) {
     printf("Alarms handled by process %d.\n", process_id);
     return NULL;
 }
-
-
-// void suspend_process(struct Process *process){
-//     process->process_state = BLOCKED;
-//     printf("Suspending process %d.\n", process->process_id);
-//     // Save execution context and perform other suspension tasks
-// }
-
-
-// void resume_suspended(struct Process *process){
-//     process->process_state = READY;
-//     printf("Resuming process %d.\n", process->process_id);
-//     // Restore execution context and resume execution
-
-// }
-
-// void terminate_process(struct Process *process){
-//     process->process_state = TERMINATED;
-//     printf("Terminating process %d\n", process->process_id);
-//     free_memory(process);
-// }
-
-
-
-
-
-// // Create and manage processes
-// struct Process* create_processes() {
-//     struct Process* processes = (struct Process*)allocate_memory(NUM_PROCESSES * sizeof(struct Process));
-    
-//     if (processes == NULL) {
-//         printf("Error: Memory allocation failed for processes\n");
-//         return NULL;
-//     }
-
-//     for (int i = 0; i < NUM_PROCESSES; i++) {
-//         processes[i].process_id = i;
-//         processes[i].process_size = 1024;
-//         processes[i].process_state = READY;
-
-//         // Create different threads based on process ID
-//         switch (i) {
-//             case TEMPERATURE_MEASUREMENT_ID:
-//                 initialize_process_context(&(processes[i]), temperature_measurement, &(processes[i].process_id));
-//                 break;
-//             case DATA_LOGGING_ID:
-//                 initialize_process_context(&(processes[i]), data_logging, &(processes[i].process_id));
-//                 break;
-//             case USER_INTERFACE_ID:
-//                 initialize_process_context(&(processes[i]), user_interface, &(processes[i].process_id));
-//                 break;
-//             case ALARM_HANDLING_ID:
-//                 initialize_process_context(&(processes[i]), alarm_handling, &(processes[i].process_id));
-//                 break;
-//             default:
-//                 break;
-//         }
-//     }
-
-//     return processes;
-// }
-
-
-// // Start a process
-// void start_process(struct Process *process) {
-//     process->process_state = RUNNING;
-//     printf("Starting process %d\n", process->process_id);
-//     // Start the task by switching to its context
-//     context_switch(NULL, (struct TaskContext *)&(process->context));
-// }
