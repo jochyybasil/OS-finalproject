@@ -1,6 +1,8 @@
 #pragma once
 
 #include <pthread.h>
+#include <sys/types.h>
+#include <sys/wait.h> 
 
 #define MAX_STACK_SIZE 0
 
@@ -17,10 +19,10 @@ struct Process
     unsigned int stack[MAX_STACK_SIZE];
     pthread_t context;
 
-    int P[7], instance;
+    int T[7], instance, alive;
 };
 
-struct Process* create_processes();
+pid_t create_processes(struct Process *processes, int id);
 void start_process(struct Process *process);
 void* temperature_measurement(void* arg);
 void* user_interface(void* arg);

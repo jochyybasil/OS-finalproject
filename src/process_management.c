@@ -5,6 +5,8 @@
 #include "../context_switching.h"
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define NUM_PROCESSES 4
 
@@ -34,59 +36,48 @@
 static int temperature_measurement_completed = 0;
 static int temperature_data_received = 0;
 
-
 // Function to initialize a task's context
 void initialize_process_context(struct Process *process, void *(*task_function)(void*), void *arg) {    
     // Initialize the task's context
     initialize_context((struct TaskContext *)&(process->context), task_function, arg);
 }
 
-// Create and manage processes
-// Updated function definition with the number of processes as an argument
-struct Process* create_processes(int num_processes) {
-    // Allocate memory based on the number of processes
-    struct Process* processes = (struct Process*)allocate_memory(num_processes * sizeof(struct Process));
+// Function to create processes using fork
+pid_t create_processes(struct Process *processes, int id) {
+    pid_t pid;
     
-    if (processes == NULL) {
-        printf("Error: Memory allocation failed for processes\n");
-        return NULL;
-    }
-
-    for (int i = 0; i < num_processes; i++) {
-        // Initialize each process based on its ID
-        processes[i].process_id = i;
-        processes[i].process_size = 1024;
-        processes[i].process_state = READY;
-
-        // Create different threads based on process ID
-        switch (i) {
+    pid = fork();
+    if (pid < 0) {
+        // Error handling
+        perror("Fork failed");
+        return -1;
+    } else if (pid == 0) {
+        // Child process
+        switch (id) {
             case TEMPERATURE_MEASUREMENT_ID:
-                initialize_process_context(&(processes[i]), temperature_measurement, &(processes[i].process_id));
+                initialize_process_context(&(processes[id]), temperature_measurement, &(processes[id].process_id));
                 break;
             case DATA_LOGGING_ID:
-                initialize_process_context(&(processes[i]), data_logging, &(processes[i].process_id));
+                initialize_process_context(&(processes[id]), data_logging, &(processes[id].process_id));
                 break;
             case USER_INTERFACE_ID:
-                initialize_process_context(&(processes[i]), user_interface, &(processes[i].process_id));
+                initialize_process_context(&(processes[id]), user_interface, &(processes[id].process_id));
                 break;
             case ALARM_HANDLING_ID:
-                initialize_process_context(&(processes[i]), alarm_handling, &(processes[i].process_id));
+                initialize_process_context(&(processes[id]), alarm_handling, &(processes[id].process_id));
                 break;
             default:
                 break;
         }
+        start_process(&processes[id]); // Start the child process
+        exit(0); // Exit the child process after execution
     }
 
-    return processes;
+    // Parent process returns
+    return pid;
 }
 
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> c9817f4854caef91f11418e272acedb7492985df
-// Start a process
+// Function to start a process
 void start_process(struct Process *process) {
     process->process_state = RUNNING;
     printf("Starting process %d\n", process->process_id);
@@ -94,8 +85,12 @@ void start_process(struct Process *process) {
     context_switch(NULL, (struct TaskContext *)&(process->context));
 }
 
-
-
+// Function to terminate a process
+void terminate_process(struct Process *process) {
+    process->process_state = TERMINATED;
+    printf("Terminating process %d\n", process->process_id);
+    // Send termination signal or perform cleanup if necessary
+}
 
 
 // Temperature measurement task
@@ -103,7 +98,7 @@ void* temperature_measurement(void* arg) {
     int process_id = *((int *)arg);
     printf("Process %d is performing temperature measurement.\n", process_id);
 
-    // Simulate temperature measurement (replace this with actual measurement logic)
+    // Simulate temperature measurement
     int measured_temperature = rand() % 50; // Random temperature between 0 and 49
 
     // Convert the measured temperature to a string
@@ -119,15 +114,10 @@ void* temperature_measurement(void* arg) {
     printf("Temperature measurement performed by process %d.\n", process_id);
 
     // Notify that temperature measurement is completed
-    temperature_measurement_completed = 1;
+    temperature_data_received = 1;
 
     return NULL;
 }
-
-
-
-
-
 
 // Data logging task
 void* data_logging(void* arg) {
@@ -154,10 +144,6 @@ void* data_logging(void* arg) {
     printf("Data logging performed by process %d.\n", process_id);
     return NULL;
 }
-
-
-
-
 
 // User interface task
 void* user_interface(void* arg) {
@@ -186,10 +172,6 @@ void* user_interface(void* arg) {
     return NULL;
 }
 
-
-
-
-
 // Alarm handling task
 void* alarm_handling(void* arg) {
     int process_id = *((int *)arg);
@@ -217,32 +199,71 @@ void* alarm_handling(void* arg) {
 }
 
 
+// void suspend_process(struct Process *process){
+//     process->process_state = BLOCKED;
+//     printf("Suspending process %d.\n", process->process_id);
+//     // Save execution context and perform other suspension tasks
+// }
+
+
+// void resume_suspended(struct Process *process){
+//     process->process_state = READY;
+//     printf("Resuming process %d.\n", process->process_id);
+//     // Restore execution context and resume execution
+
+// }
+
+// void terminate_process(struct Process *process){
+//     process->process_state = TERMINATED;
+//     printf("Terminating process %d\n", process->process_id);
+//     free_memory(process);
+// }
 
 
 
-void suspend_process(struct Process *process){
-    process->process_state = BLOCKED;
-    printf("Suspending process %d.\n", process->process_id);
-    // Save execution context and perform other suspension tasks
-}
 
 
+// // Create and manage processes
+// struct Process* create_processes() {
+//     struct Process* processes = (struct Process*)allocate_memory(NUM_PROCESSES * sizeof(struct Process));
+    
+//     if (processes == NULL) {
+//         printf("Error: Memory allocation failed for processes\n");
+//         return NULL;
+//     }
+
+//     for (int i = 0; i < NUM_PROCESSES; i++) {
+//         processes[i].process_id = i;
+//         processes[i].process_size = 1024;
+//         processes[i].process_state = READY;
+
+//         // Create different threads based on process ID
+//         switch (i) {
+//             case TEMPERATURE_MEASUREMENT_ID:
+//                 initialize_process_context(&(processes[i]), temperature_measurement, &(processes[i].process_id));
+//                 break;
+//             case DATA_LOGGING_ID:
+//                 initialize_process_context(&(processes[i]), data_logging, &(processes[i].process_id));
+//                 break;
+//             case USER_INTERFACE_ID:
+//                 initialize_process_context(&(processes[i]), user_interface, &(processes[i].process_id));
+//                 break;
+//             case ALARM_HANDLING_ID:
+//                 initialize_process_context(&(processes[i]), alarm_handling, &(processes[i].process_id));
+//                 break;
+//             default:
+//                 break;
+//         }
+//     }
+
+//     return processes;
+// }
 
 
-
-void resume_suspended(struct Process *process){
-    process->process_state = READY;
-    printf("Resuming process %d.\n", process->process_id);
-    // Restore execution context and resume execution
-
-}
-
-
-
-
-
-void terminate_process(struct Process *process){
-    process->process_state = TERMINATED;
-    printf("Terminating process %d\n", process->process_id);
-    free_memory(process);
-}
+// // Start a process
+// void start_process(struct Process *process) {
+//     process->process_state = RUNNING;
+//     printf("Starting process %d\n", process->process_id);
+//     // Start the task by switching to its context
+//     context_switch(NULL, (struct TaskContext *)&(process->context));
+// }
