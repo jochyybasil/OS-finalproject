@@ -42,15 +42,18 @@ void initialize_process_context(struct Process *process, void *(*task_function)(
 }
 
 // Create and manage processes
-struct Process* create_processes() {
-    struct Process* processes = (struct Process*)allocate_memory(NUM_PROCESSES * sizeof(struct Process));
+// Updated function definition with the number of processes as an argument
+struct Process* create_processes(int num_processes) {
+    // Allocate memory based on the number of processes
+    struct Process* processes = (struct Process*)allocate_memory(num_processes * sizeof(struct Process));
     
     if (processes == NULL) {
         printf("Error: Memory allocation failed for processes\n");
         return NULL;
     }
 
-    for (int i = 0; i < NUM_PROCESSES; i++) {
+    for (int i = 0; i < num_processes; i++) {
+        // Initialize each process based on its ID
         processes[i].process_id = i;
         processes[i].process_size = 1024;
         processes[i].process_state = READY;
@@ -78,6 +81,11 @@ struct Process* create_processes() {
 }
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> c9817f4854caef91f11418e272acedb7492985df
 // Start a process
 void start_process(struct Process *process) {
     process->process_state = RUNNING;
@@ -85,6 +93,10 @@ void start_process(struct Process *process) {
     // Start the task by switching to its context
     context_switch(NULL, (struct TaskContext *)&(process->context));
 }
+
+
+
+
 
 // Temperature measurement task
 void* temperature_measurement(void* arg) {
@@ -112,6 +124,11 @@ void* temperature_measurement(void* arg) {
     return NULL;
 }
 
+
+
+
+
+
 // Data logging task
 void* data_logging(void* arg) {
     int process_id = *((int *)arg);
@@ -137,6 +154,10 @@ void* data_logging(void* arg) {
     printf("Data logging performed by process %d.\n", process_id);
     return NULL;
 }
+
+
+
+
 
 // User interface task
 void* user_interface(void* arg) {
@@ -165,6 +186,10 @@ void* user_interface(void* arg) {
     return NULL;
 }
 
+
+
+
+
 // Alarm handling task
 void* alarm_handling(void* arg) {
     int process_id = *((int *)arg);
@@ -191,11 +216,18 @@ void* alarm_handling(void* arg) {
     return NULL;
 }
 
+
+
+
+
 void suspend_process(struct Process *process){
     process->process_state = BLOCKED;
     printf("Suspending process %d.\n", process->process_id);
     // Save execution context and perform other suspension tasks
 }
+
+
+
 
 
 void resume_suspended(struct Process *process){
@@ -204,6 +236,10 @@ void resume_suspended(struct Process *process){
     // Restore execution context and resume execution
 
 }
+
+
+
+
 
 void terminate_process(struct Process *process){
     process->process_state = TERMINATED;
